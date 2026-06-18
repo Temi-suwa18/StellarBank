@@ -40,7 +40,7 @@ Traditional remittance services charge exorbitant fees and take days to process 
 
 ---
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 StellarBank/
