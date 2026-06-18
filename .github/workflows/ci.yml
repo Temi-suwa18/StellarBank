@@ -1,0 +1,420 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  NODE_VERSION: '18'
+  RUST_VERSION: '1.72'
+
+jobs:
+  # Backend Testing
+  backend-test:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: stellarbank_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 3s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: backend/package-lock.json
+    
+    - name: Install dependencies
+      working-directory: ./backend
+      run: npm ci
+    
+    - name: Run linting
+      working-directory: ./backend
+      run: npm run lint
+    
+    - name: Run type checking
+      working-directory: ./backend
+      run: npm run type-check
+    
+    - name: Run unit tests
+      working-directory: ./backend
+      run: npm run test:coverage
+      env:
+        NODE_ENV: test
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/stellarbank_test
+        REDIS_URL: redis://localhost:6379
+        JWT_SECRET: test_secret_key
+    
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./backend/coverage/lcov.info
+        flags: backend
+        name: backend-coverage
+
+  # Frontend Testing  
+  frontend-test:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+    
+    - name: Install dependencies
+      working-directory: ./frontend
+      run: npm ci
+    
+    - name: Run linting
+      working-directory: ./frontend
+      run: npm run lint
+    
+    - name: Run type checking
+      working-directory: ./frontend
+      run: npm run type-check
+    
+    - name: Run unit tests
+      working-directory: ./frontend
+      run: npm run test:coverage
+    
+    - name: Build application
+      working-directory: ./frontend
+      run: npm run build
+      env:
+        NEXT_PUBLIC_API_URL: https://api-test.stellarbank.io
+        NEXT_PUBLIC_STELLAR_NETWORK: testnet
+    
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./frontend/coverage/lcov.info
+        flags: frontend
+        name: frontend-coverage
+
+  # Smart Contracts Testing
+  contracts-test:
+    name: Smart Contracts Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: ${{ env.RUST_VERSION }}
+        target: wasm32-unknown-unknown
+        override: true
+        components: rustfmt, clippy
+    
+    - name: Cache Rust dependencies
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+          contracts/target/
+        key: ${{ runner.os }}-cargo-${{ hashFiles('contracts/**/Cargo.lock') }}
+    
+    - name: Install Soroban CLI
+      run: |
+        cargo install --locked soroban-cli
+    
+    - name: Run formatting check
+      working-directory: ./contracts
+      run: cargo fmt --all -- --check
+    
+    - name: Run linting
+      working-directory: ./contracts
+      run: cargo clippy --all-targets --all-features -- -D warnings
+    
+    - name: Run unit tests
+      working-directory: ./contracts
+      run: cargo test --all
+    
+    - name: Build contracts
+      working-directory: ./contracts
+      run: cargo build --target wasm32-unknown-unknown --release
+    
+    - name: Run integration tests
+      working-directory: ./contracts
+      run: cargo test --test integration_tests
+
+  # Mobile Testing (Android)
+  mobile-android-test:
+    name: Mobile Android Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: mobile/package-lock.json
+    
+    - name: Setup Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'adopt'
+        java-version: '11'
+    
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v2
+    
+    - name: Install dependencies
+      working-directory: ./mobile
+      run: npm ci
+    
+    - name: Run linting
+      working-directory: ./mobile
+      run: npm run lint
+    
+    - name: Run unit tests
+      working-directory: ./mobile
+      run: npm run test:coverage
+    
+    - name: Build Android APK
+      working-directory: ./mobile
+      run: |
+        cd android
+        ./gradlew assembleDebug
+    
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: android-apk
+        path: mobile/android/app/build/outputs/apk/debug/app-debug.apk
+
+  # Mobile Testing (iOS)
+  mobile-ios-test:
+    name: Mobile iOS Tests
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: mobile/package-lock.json
+    
+    - name: Install dependencies
+      working-directory: ./mobile
+      run: npm ci
+    
+    - name: Install Pods
+      working-directory: ./mobile/ios
+      run: pod install
+    
+    - name: Build iOS app
+      working-directory: ./mobile
+      run: |
+        npx react-native run-ios --configuration Debug --simulator="iPhone 14"
+
+  # E2E Testing
+  e2e-tests:
+    name: End-to-End Tests
+    runs-on: ubuntu-latest
+    needs: [backend-test, frontend-test]
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: stellarbank_e2e
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: |
+        npm install
+        npm run install:all
+    
+    - name: Build applications
+      run: |
+        npm run build:backend
+        npm run build:frontend
+    
+    - name: Start services
+      run: |
+        npm run dev &
+        sleep 30  # Wait for services to start
+    
+    - name: Run E2E tests
+      run: npm run test:e2e
+      env:
+        NODE_ENV: test
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/stellarbank_e2e
+        REDIS_URL: redis://localhost:6379
+
+  # Security Scanning
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+    
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: 'trivy-results.sarif'
+    
+    - name: Run npm audit
+      working-directory: ./backend
+      run: npm audit --audit-level moderate
+    
+    - name: Run npm audit (frontend)
+      working-directory: ./frontend
+      run: npm audit --audit-level moderate
+
+  # Deployment (Production)
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [backend-test, frontend-test, contracts-test, e2e-tests, security-scan]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    
+    - name: Install dependencies
+      run: npm run install:all
+    
+    - name: Build applications
+      run: npm run build
+      env:
+        NODE_ENV: production
+        NEXT_PUBLIC_API_URL: https://api.stellarbank.io
+        NEXT_PUBLIC_STELLAR_NETWORK: mainnet
+    
+    - name: Deploy to AWS
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: us-east-1
+      run: |
+        # Deploy backend to ECS
+        aws ecs update-service --cluster stellarbank-prod --service stellarbank-backend --force-new-deployment
+        
+        # Deploy frontend to S3/CloudFront
+        aws s3 sync frontend/dist/ s3://stellarbank-frontend-prod/
+        aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
+    
+    - name: Deploy smart contracts to mainnet
+      working-directory: ./contracts
+      run: ./scripts/deploy-mainnet.sh
+      env:
+        STELLAR_PRIVATE_KEY: ${{ secrets.STELLAR_MAINNET_PRIVATE_KEY }}
+    
+    - name: Notify Slack
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        channel: '#deployments'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+      if: always()
+
+  # Deployment (Staging)
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [backend-test, frontend-test, contracts-test]
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    environment: staging
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    
+    - name: Install dependencies
+      run: npm run install:all
+    
+    - name: Build applications
+      run: npm run build
+      env:
+        NODE_ENV: staging
+        NEXT_PUBLIC_API_URL: https://api-staging.stellarbank.io
+        NEXT_PUBLIC_STELLAR_NETWORK: testnet
+    
+    - name: Deploy to staging
+      run: |
+        # Deploy to staging environment
+        echo "Deploying to staging environment"
