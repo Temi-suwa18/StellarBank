@@ -1,4 +1,4 @@
-# 🌟 StellarBank - Next-Generation Cross-Border Remittance Platform
+# StellarBank - Next-Generation Cross-Border Remittance Platform
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Stellar](https://img.shields.io/badge/Built%20on-Stellar-blue)](https://stellar.org)
@@ -9,25 +9,25 @@
 > **Empowering financial inclusion through blockchain technology**  
 > *Instant, affordable cross-border money transfers for emerging markets*
 
-## 🌍 Supporting Key Remittance Corridors
+## Supporting Key Remittance Corridors
 
-- 🇳🇬 **Nigeria** ↔ 🇺🇸 United States
-- 🇳🇬 **Nigeria** ↔ 🇬🇧 United Kingdom  
-- 🌍 **Africa** ↔ 🇪🇺 Europe
-- 🌐 **Global** expansion ready
+- **Nigeria** ↔ 🇺🇸 United States
+- **Nigeria** ↔ 🇬🇧 United Kingdom  
+- **Africa** ↔ 🇪🇺 Europe
+- **Global** expansion ready
 
 ---
 
-## 🚀 Project Overview
+## Project Overview
 
 StellarBank revolutionizes international money transfers by leveraging Stellar blockchain technology to provide:
 
-- ⚡ **Instant transfers** (2-5 seconds vs 3-7 days traditional)
-- 💰 **Low fees** (0.5% vs 8-12% traditional)
-- 🔒 **Bank-grade security** with blockchain transparency
-- 📱 **Mobile-first design** for emerging markets
-- 🌐 **Multi-currency support** with automatic conversion
-- 🏪 **Local cash-out partners** in 50+ countries
+- **Instant transfers** (2-5 seconds vs 3-7 days traditional)
+- **Low fees** (0.5% vs 8-12% traditional)
+- **Bank-grade security** with blockchain transparency
+- **Mobile-first design** for emerging markets
+- **Multi-currency support** with automatic conversion
+- **Local cash-out partners** in 50+ countries
 
 ### Why StellarBank?
 
@@ -44,18 +44,13 @@ Traditional remittance services charge exorbitant fees and take days to process 
 
 ```
 StellarBank/
-├── 📱 frontend/          # React.js Web Application
-├── 🔧 backend/           # Node.js API Server  
-├── 📋 contracts/         # Stellar Smart Contracts (Soroban)
-├── 📲 mobile/            # React Native Mobile App
-├── 📚 docs/              # Documentation & Guides
-├── 🔄 .github/           # GitHub Actions & Templates
-└── 🐳 docker-compose.yml # Development Environment
-```
-
----
-
-## ⚡ Quick Start
+├── frontend/          # React.js Web Application
+├── backend/           # Node.js API Server  
+├── contracts/         # Stellar Smart Contracts (Soroban)
+├── mobile/            # React Native Mobile App
+├── docs/              # Documentation & Guides
+├── .github/           # GitHub Actions & Templates
+└── docker-compose.yml # Development Environment
 
 ### Prerequisites
 - Node.js 16+
@@ -64,7 +59,6 @@ StellarBank/
 - React Native CLI (for mobile)
 
 ### 🚀 One-Command Setup
-```bash
 # Clone the repository
 git clone https://github.com/your-org/StellarBank.git
 cd StellarBank
@@ -82,7 +76,7 @@ npm run deploy:testnet
 npm run dev
 ```
 
-### 🌐 Access the Application
+### Access the Application
 - **Frontend:** http://localhost:3000
 - **Backend API:** http://localhost:8000
 - **API Docs:** http://localhost:8000/docs
@@ -90,33 +84,33 @@ npm run dev
 
 ---
 
-## 🎯 Core Features
+## Core Features
 
-### 💸 **Send Money Globally**
+### **Send Money Globally**
 - Real-time exchange rates via Stellar DEX
 - Multiple payment methods (bank, card, mobile money)
 - Recipient notifications via SMS/email
 - Transaction tracking and history
 
-### 🏪 **Cash-Out Network** 
+### **Cash-Out Network** 
 - Partner agents in 50+ countries
 - Mobile money integration (MTN, Airtel, etc.)
 - Bank transfer support
 - Crypto wallet withdrawals
 
-### 💰 **Multi-Currency Support**
+### **Multi-Currency Support**
 - Stablecoins (USDC, USDT, NGNT, GNGN)
 - Fiat on/off ramps
 - Automatic best-rate routing
 - Price protection guarantees
 
-### 🔐 **Enterprise Security**
+### **Enterprise Security**
 - Multi-signature wallets
 - KYC/AML compliance
 - Transaction limits and monitoring
 - Fraud detection algorithms
 
-### 📊 **Analytics & Reporting**
+### **Analytics & Reporting**
 - Real-time transaction monitoring
 - Compliance reporting
 - Revenue analytics
@@ -124,7 +118,7 @@ npm run dev
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 ### Frontend & Mobile
 - **React 18** with TypeScript
@@ -156,32 +150,32 @@ npm run dev
 
 ---
 
-## 📖 Documentation
+## Documentation
 
 | Document | Description |
 |----------|-------------|
-| [🏗️ Architecture Guide](./docs/architecture.md) | System design and components |
-| [🔧 API Documentation](./docs/api.md) | RESTful API reference |
-| [📱 Mobile Setup](./mobile/README.md) | React Native development guide |
-| [🔐 Smart Contracts](./contracts/README.md) | Soroban contract documentation |
-| [🚀 Deployment Guide](./docs/deployment.md) | Production deployment steps |
-| [🤝 Contributing](./docs/CONTRIBUTING.md) | Contribution guidelines |
-| [🔒 Security](./docs/SECURITY.md) | Security policies and procedures |
+| [Architecture Guide](./docs/architecture.md) | System design and components |
+| [ API Documentation](./docs/api.md) | RESTful API reference |
+| [Mobile Setup](./mobile/README.md) | React Native development guide |
+| [Smart Contracts](./contracts/README.md) | Soroban contract documentation |
+| [Deployment Guide](./docs/deployment.md) | Production deployment steps |
+| [Contributing](./docs/CONTRIBUTING.md) | Contribution guidelines |
+| [Security](./docs/SECURITY.md) | Security policies and procedures |
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions from the community! See our [Contributing Guide](./docs/CONTRIBUTING.md) for details.
 
-### 🎯 Ways to Contribute
-- 🐛 Report bugs and issues
-- 💡 Suggest new features
-- 📝 Improve documentation
-- 🧪 Write tests
-- 🔧 Submit pull requests
+### Ways to Contribute
+- Report bugs and issues
+- Suggest new features
+- Improve documentation
+- Write tests
+- Submit pull requests
 
-### 👥 Core Contributors
+### Core Contributors
 - [@presidojay1](https://github.com/presidojay1) - Project Lead & Architecture
 - [@abayomicornelius](https://github.com/abayomicornelius) - Smart Contracts & Backend
 - [@prodbycorne](https://github.com/prodbycorne) - Frontend & Mobile Development
@@ -190,7 +184,7 @@ We welcome contributions from the community! See our [Contributing Guide](./docs
 
 ---
 
-## 📊 Project Statistics
+## Project Statistics
 
 - **Total Commits:** 847+
 - **Contributors:** 12+
@@ -201,51 +195,51 @@ We welcome contributions from the community! See our [Contributing Guide](./docs
 
 ---
 
-## 🎖️ Achievements & Recognition
+## Achievements & Recognition
 
-- 🏆 **Stellar Foundation Grant Recipient** - $50,000 development grant
-- 🥇 **Best Fintech Innovation** - Africa Blockchain Summit 2024
-- 🌟 **Featured Project** - Stellar Community Fund
-- 📰 **Press Coverage** - TechCrunch, CoinDesk, Forbes Africa
+- **Stellar Foundation Grant Recipient** - $50,000 development grant
+- **Best Fintech Innovation** - Africa Blockchain Summit 2024
+- **Featured Project** - Stellar Community Fund
+- **Press Coverage** - TechCrunch, CoinDesk, Forbes Africa
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 🔗 Links & Resources
+## Links & Resources
 
-- **🌐 Website:** [https://stellarbank.io](https://stellarbank.io)
-- **📖 Documentation:** [https://docs.stellarbank.io](https://docs.stellarbank.io)  
-- **🐦 Twitter:** [@StellarBankHQ](https://twitter.com/StellarBankHQ)
-- **💬 Discord:** [StellarBank Community](https://discord.gg/stellarbank)
+- **Website:** [https://stellarbank.io](https://stellarbank.io)
+- **Documentation:** [https://docs.stellarbank.io](https://docs.stellarbank.io)  
+- **Twitter:** [@StellarBankHQ](https://twitter.com/StellarBankHQ)
+- **Discord:** [StellarBank Community](https://discord.gg/stellarbank)
 - **📧 Email:** hello@stellarbank.io
 
 ---
 
-## 🚀 Roadmap
+## Roadmap
 
-### Q1 2024 ✅
+### Q1 2024 
 - [x] MVP Development Complete
 - [x] Testnet Deployment
 - [x] Initial Partner Integrations
 
-### Q2 2024 🔄
+### Q2 2024
 - [ ] Mainnet Launch
 - [ ] Mobile App Release
 - [ ] Nigeria & UK Launch
 - [ ] 1,000+ Beta Users
 
-### Q3 2024 📋
+### Q3 2024
 - [ ] European Expansion  
 - [ ] Advanced Analytics
 - [ ] Corporate Accounts
 - [ ] 10,000+ Active Users
 
-### Q4 2024 🎯
+### Q4 2024 
 - [ ] Global Coverage
 - [ ] Enterprise API
 - [ ] White-label Solutions
@@ -257,7 +251,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### ⭐ Star us on GitHub — it motivates us a lot!
 
-**Made with ❤️ by the StellarBank Team**
+
 
 *Democratizing financial services for emerging markets through blockchain innovation*
 
